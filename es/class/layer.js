@@ -3,7 +3,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 import { List } from 'immutable';
-import { Project, Area, Line, Hole, Item, Vertex } from './export';
+import { Project, Area, Line, Hole, Item, Vertex, Connection } from './export';
 import { GraphInnerCycles, GeometryUtils, IDBroker } from '../utils/export';
 import { Layer as LayerModel } from '../models';
 
@@ -66,7 +66,8 @@ var Layer = function () {
           lines = _state$getIn.lines,
           holes = _state$getIn.holes,
           items = _state$getIn.items,
-          areas = _state$getIn.areas;
+          areas = _state$getIn.areas,
+          connections = _state$getIn.connections;
 
       if (lines) lines.forEach(function (line) {
         state = Line.unselect(state, layerID, line.id).updatedState;
@@ -79,6 +80,9 @@ var Layer = function () {
       });
       if (areas) areas.forEach(function (area) {
         state = Area.unselect(state, layerID, area.id).updatedState;
+      });
+      if (connections) connections.forEach(function (connection) {
+        state = Connection.unselect(state, layerID, connection.id).updatedState;
       });
 
       return { updatedState: state };
@@ -311,6 +315,9 @@ var Layer = function () {
       selected.items.forEach(function (itemID) {
         return state = Item.setProperties(state, layerID, itemID, properties).updatedState;
       });
+      selected.connections.forEach(function (connectionID) {
+        return state = Connection.setProperties(state, layerID, connectionID, properties).updatedState;
+      });
 
       return { updatedState: state };
     }
@@ -330,6 +337,9 @@ var Layer = function () {
       });
       selected.items.forEach(function (itemID) {
         return state = Item.updateProperties(state, layerID, itemID, properties).updatedState;
+      });
+      selected.connections.forEach(function (connectionID) {
+        return state = Connection.updateProperties(state, layerID, connectionID, properties).updatedState;
       });
 
       return { updatedState: state };

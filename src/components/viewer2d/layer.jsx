@@ -5,13 +5,14 @@ import {
   Area,
   Vertex,
   Item,
-  Group
+  Group,
+  Connection
 } from './export';
 
 export default function Layer({ layer, scene, catalog }) {
 
   let { unit, groups } = scene;
-  let { lines, areas, vertices, holes, id: layerID, items, opacity } = layer;
+  let { lines, areas, vertices, holes, id: layerID, items, connections, opacity } = layer;
 
   return (
     <g opacity={opacity}>
@@ -22,6 +23,10 @@ export default function Layer({ layer, scene, catalog }) {
       {
         lines.valueSeq().map(line =>
           <Line key={line.id} layer={layer} line={line} scene={scene} catalog={catalog} />)
+      }
+      {
+        connections.valueSeq().map(connection =>
+          <Connection key={connection.id} layer={layer} connection={connection} />)
       }
       {
         items.valueSeq().map(item =>

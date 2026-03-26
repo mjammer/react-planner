@@ -31,6 +31,7 @@ function mode2PointerEvents(mode) {
     case constants.MODE_DRAGGING_ITEM:
     case constants.MODE_DRAGGING_LINE:
     case constants.MODE_DRAGGING_VERTEX:
+    case constants.MODE_DRAWING_CONNECTION:
       return { pointerEvents: 'none' };
 
     default:
@@ -51,6 +52,7 @@ function mode2Cursor(mode) {
 
     case constants.MODE_WAITING_DRAWING_LINE:
     case constants.MODE_DRAWING_LINE:
+    case constants.MODE_DRAWING_CONNECTION:
       return { cursor: 'crosshair' };
     default:
       return { cursor: 'default' };
@@ -66,6 +68,7 @@ function mode2DetectAutopan(mode) {
     case constants.MODE_DRAGGING_ITEM:
     case constants.MODE_DRAWING_HOLE:
     case constants.MODE_DRAWING_ITEM:
+    case constants.MODE_DRAWING_CONNECTION:
       return true;
 
     default:
@@ -90,7 +93,7 @@ function extractElementData(node) {
 
 export default function Viewer2D(
   { state, width, height },
-  { viewer2DActions, linesActions, holesActions, verticesActions, itemsActions, areaActions, projectActions, catalog }) {
+  { viewer2DActions, linesActions, holesActions, verticesActions, itemsActions, areaActions, projectActions, connectionsActions, catalog }) {
 
 
   let { viewer2D, mode, scene } = state;
@@ -143,6 +146,10 @@ export default function Viewer2D(
 
       case constants.MODE_ROTATING_ITEM:
         itemsActions.updateRotatingItem(x, y);
+        break;
+
+      case constants.MODE_DRAWING_CONNECTION:
+        connectionsActions.updateDrawingConnection(x, y);
         break;
     }
 
@@ -222,6 +229,10 @@ export default function Viewer2D(
             itemsActions.selectItem(elementData.layer, elementData.id);
             break;
 
+          case 'connections':
+            connectionsActions.selectConnection(elementData.layer, elementData.id);
+            break;
+
           case 'none':
             projectActions.unselectAll();
             break;
@@ -263,6 +274,13 @@ export default function Viewer2D(
 
       case constants.MODE_ROTATING_ITEM:
         itemsActions.endRotatingItem(x, y);
+        break;
+
+      case constants.MODE_DRAWING_CONNECTION:
+        let connectionElementData = extractElementData(event.target);
+        if (connectionElementData && connectionElementData.prototype === 'items') {
+          connectionsActions.endDrawingConnection(layerID, connectionElementData.id);
+        }
         break;
     }
 
@@ -395,5 +413,6 @@ Viewer2D.contextTypes = {
   itemsActions: PropTypes.object.isRequired,
   areaActions: PropTypes.object.isRequired,
   projectActions: PropTypes.object.isRequired,
+  connectionsActions: PropTypes.object.isRequired,
   catalog: PropTypes.object.isRequired,
 };

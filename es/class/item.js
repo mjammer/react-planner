@@ -2,7 +2,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-import { Layer, Group } from './export';
+import { Layer, Group, Connection } from './export';
 import { IDBroker, NameGenerator } from '../utils/export';
 import { Map, fromJS } from 'immutable';
 
@@ -45,6 +45,7 @@ var Item = function () {
     key: 'remove',
     value: function remove(state, layerID, itemID) {
       state = this.unselect(state, layerID, itemID).updatedState;
+      state = Connection.removeConnectionsByItemId(state, layerID, itemID).updatedState;
       state = Layer.removeElement(state, layerID, 'items', itemID).updatedState;
 
       state.getIn(['scene', 'groups']).forEach(function (group) {

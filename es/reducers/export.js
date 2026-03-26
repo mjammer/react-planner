@@ -8,8 +8,9 @@ import ReactPlannerSceneReducer from './scene-reducer';
 import ReactPlannerVerticesReducer from './vertices-reducer';
 import ReactPlannerViewer2dReducer from './viewer2d-reducer';
 import ReactPlannerViewer3dReducer from './viewer3d-reducer';
+import ReactPlannerConnectionsReducer from './connections-reducer';
 
-export { ReactPlannerAreasReducer, ReactPlannerHolesReducer, ReactPlannerItemsReducer, ReactPlannerLinesReducer, ReactPlannerGroupsReducer, ReactPlannerProjectReducer, ReactPlannerSceneReducer, ReactPlannerVerticesReducer, ReactPlannerViewer2dReducer, ReactPlannerViewer3dReducer };
+export { ReactPlannerAreasReducer, ReactPlannerHolesReducer, ReactPlannerItemsReducer, ReactPlannerLinesReducer, ReactPlannerGroupsReducer, ReactPlannerProjectReducer, ReactPlannerSceneReducer, ReactPlannerVerticesReducer, ReactPlannerViewer2dReducer, ReactPlannerViewer3dReducer, ReactPlannerConnectionsReducer };
 
 export default {
   ReactPlannerAreasReducer: ReactPlannerAreasReducer,
@@ -21,5 +22,6 @@ export default {
   ReactPlannerSceneReducer: ReactPlannerSceneReducer,
   ReactPlannerVerticesReducer: ReactPlannerVerticesReducer,
   ReactPlannerViewer2dReducer: ReactPlannerViewer2dReducer,
-  ReactPlannerViewer3dReducer: ReactPlannerViewer3dReducer
+  ReactPlannerViewer3dReducer: ReactPlannerViewer3dReducer,
+  ReactPlannerConnectionsReducer: ReactPlannerConnectionsReducer
 };

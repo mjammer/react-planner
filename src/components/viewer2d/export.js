@@ -10,6 +10,7 @@ import Item from './item';
 import Area from './area';
 import Grids from './grids/grids';
 import Group from './group';
+import Connection from './connection';
 import RulerX from './rulerX';
 import RulerY from './rulerY';
 
@@ -26,6 +27,7 @@ export {
   Area,
   Grids,
   Group,
+  Connection,
   RulerX,
   RulerY
 };
@@ -43,6 +45,7 @@ export default {
   Area,
   Grids,
   Group,
+  Connection,
   RulerX,
   RulerY
 };

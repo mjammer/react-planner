@@ -5,10 +5,19 @@ import PropTypes from 'prop-types';
 import Scene from './scene';
 import Snap from './snap';
 import * as SharedStyle from '../../shared-style';
+import { MODE_DRAWING_CONNECTION } from '../../constants';
 
 var guideStyle = {
   stroke: SharedStyle.SECONDARY_COLOR.main,
   strokewidth: '2.5px'
+};
+
+var connectionDrawingStyle = {
+  stroke: '#0096fd',
+  strokeWidth: '3px',
+  strokeDasharray: '8,4',
+  fill: 'none',
+  pointerEvents: 'none'
 };
 
 export default function State(_ref) {
@@ -16,7 +25,9 @@ export default function State(_ref) {
       catalog = _ref.catalog;
   var activeSnapElement = state.activeSnapElement,
       snapElements = state.snapElements,
-      scene = state.scene;
+      scene = state.scene,
+      mode = state.mode,
+      drawingSupport = state.drawingSupport;
   var width = scene.width,
       height = scene.height;
 
@@ -24,6 +35,23 @@ export default function State(_ref) {
   activeSnapElement = activeSnapElement ? React.createElement(Snap, { snap: activeSnapElement, width: scene.width, height: scene.height }) : null;
   // snapElements = snapElements.map((snap,id) => <Snap key={id} snap={snap} width={scene.width} height={scene.height}/>);
   snapElements = null; //only for debug purpose
+
+  var connectionDrawingLine = null;
+  if (mode === MODE_DRAWING_CONNECTION && drawingSupport.get('startItemId')) {
+    var layerID = drawingSupport.get('layerID') || scene.selectedLayer;
+    var layer = scene.getIn(['layers', layerID]);
+    var startItem = layer && layer.getIn(['items', drawingSupport.get('startItemId')]);
+    var currentX = drawingSupport.get('currentX');
+    var currentY = drawingSupport.get('currentY');
+
+    if (startItem && currentX !== undefined && currentY !== undefined) {
+      connectionDrawingLine = React.createElement('line', {
+        x1: startItem.x, y1: startItem.y,
+        x2: currentX, y2: currentY,
+        style: connectionDrawingStyle
+      });
+    }
+  }
 
   return React.createElement(
     'g',
@@ -48,7 +76,8 @@ export default function State(_ref) {
         return React.createElement('line', { key: vgKey, x1: vgVal, y1: 0, x2: vgVal, y2: height, style: guideStyle });
       }),
       activeSnapElement,
-      snapElements
+      snapElements,
+      connectionDrawingLine
     )
   );
 }
