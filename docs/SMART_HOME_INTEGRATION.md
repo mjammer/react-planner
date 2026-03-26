@@ -1287,6 +1287,70 @@ REST API：HTTPS + JWT Bearer Token
 
 ---
 
+## 16. 设备连线功能（Device Connection）
+
+本项目已在源码中实现了设备间连线功能，支持在 2D 画布上绘制设备之间的连接线（如信号线、控制线、数据线等）。
+
+### 16.1 数据模型
+
+**`Connection` Record**（`src/models.js`）：
+
+```javascript
+{
+  id: '',          // 唯一 ID（IDBroker 生成）
+  type: 'straight', // 连线类型（当前支持 'straight'）
+  startItemId: '', // 起点 Item ID
+  endItemId: '',   // 终点 Item ID
+  properties: Map(), // 可扩展自定义属性（颜色、线型等）
+  selected: false  // 是否选中
+}
+```
+
+**`Layer` 中新增 `connections: Map()`**，与 `items`、`lines` 等平行存储。
+
+### 16.2 交互模式
+
+新增常量 `MODE_DRAWING_CONNECTION`（`src/constants.js`）。
+
+连线操作流程：
+1. 外部代码调用 `connectionsActions.beginDrawingConnection(layerID, startItemId)` → 进入 `MODE_DRAWING_CONNECTION`
+2. 鼠标移动 → 实时更新 `drawingSupport.currentX/Y`，画布渲染跟随鼠标的虚线游标线
+3. 点击目标 Item → 触发 `connectionsActions.endDrawingConnection(layerID, endItemId)` → 创建连线，回到 `MODE_IDLE`
+4. 点击空白区域 → 取消连线操作，回到 `MODE_IDLE`
+
+### 16.3 如何触发连线操作
+
+在右侧属性面板（Sidebar）或设备图标上，可按如下方式调用：
+
+```jsx
+// 在组件中，通过 context 获取 connectionsActions
+static contextTypes = {
+  connectionsActions: PropTypes.object.isRequired
+};
+
+// 点击"连接"按钮时：
+this.context.connectionsActions.beginDrawingConnection(layerID, selectedItemId);
+```
+
+或者使用 Redux dispatch：
+
+```javascript
+import { connectionsActions } from 'react-planner/src/actions/export';
+store.dispatch(connectionsActions.beginDrawingConnection(layerID, itemId));
+```
+
+### 16.4 删除连线
+
+- **选中连线后按 Delete/Backspace 键**：自动通过 `Project.remove()` 删除
+- **删除关联设备时**：自动清理所有连接该设备的连线
+- **代码调用**：`connectionsActions.removeConnection(layerID, connectionID)`
+
+### 16.5 序列化
+
+连线数据随 Layer 一起序列化（`layer.connections` Map）。使用 `Project.saveProject()` / `loadProject()` 时，Immutable 的 `toJS()` 会自动将连线数据转为 JSON，加载时 `Layer` 构造函数通过 `safeLoadMapList(json.connections, Connection)` 恢复为 Immutable Record。
+
+---
+
 ## 14. 性能优化建议
 
 ### 14.1 状态更新优化
@@ -1322,16 +1386,20 @@ store.dispatch(batchUpdateDeviceStatus([
 | 文件路径 | 说明 |
 |---------|------|
 | `src/react-planner.jsx` | ReactPlanner 主组件，props 接口定义 |
-| `src/models.js` | 所有 Immutable Record 数据模型 |
-| `src/constants.js` | 所有 Action 类型常量和 Mode 常量 |
+| `src/models.js` | 所有 Immutable Record 数据模型（含 Connection） |
+| `src/constants.js` | 所有 Action 类型常量和 Mode 常量（含 CONNECTION_ACTIONS, MODE_DRAWING_CONNECTION） |
 | `src/catalog/catalog.js` | Catalog 类，`registerElement` API |
-| `src/class/item.js` | Item 静态操作类（create/select/remove） |
+| `src/class/item.js` | Item 静态操作类（create/select/remove，删除时自动清理关联连线） |
+| `src/class/connection.js` | Connection 静态操作类（create/select/remove/beginDrawing/endDrawing） |
 | `src/class/area.js` | Area 静态操作类（含 `detectAndUpdateAreas`） |
 | `src/reducers/reducer.js` | 主 reducer，action 路由逻辑 |
+| `src/reducers/connections-reducer.js` | Connection 相关 Reducer |
 | `src/actions/items-actions.js` | Items 相关 Action Creator |
+| `src/actions/connections-actions.js` | Connections 相关 Action Creator（beginDrawingConnection, endDrawingConnection 等） |
 | `src/plugins/autosave.js` | 自动保存插件（SyncPlugin 参考原型） |
 | `src/utils/geometry-utils.js` | 几何计算工具（坐标变换等） |
 | `src/components/viewer2d/item.jsx` | 2D Item 渲染组件（调用 render2D） |
+| `src/components/viewer2d/connection.jsx` | 2D Connection SVG 渲染组件 |
 | `src/components/viewer3d/scene-creator.js` | 3D 场景构建（调用 render3D） |
 | `demo/src/catalog/mycatalog.js` | 完整 Catalog 注册示例 |
 | `demo/src/renderer.jsx` | 完整 Redux Store 集成示例 |

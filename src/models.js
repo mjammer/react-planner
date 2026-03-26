@@ -48,6 +48,7 @@ export class ElementsSet extends Record({
   holes: new List(),
   areas: new List(),
   items: new List(),
+  connections: new List(),
 }, 'ElementsSet') {
   constructor(json = {}) {
     super({
@@ -55,7 +56,8 @@ export class ElementsSet extends Record({
       lines: new List(json.lines || []),
       holes: new List(json.holes || []),
       areas: new List(json.areas || []),
-      items: new List(json.items || [])
+      items: new List(json.items || []),
+      connections: new List(json.connections || [])
     });
   }
 }
@@ -149,6 +151,22 @@ export class Item extends Record({
   }
 }
 
+export class Connection extends Record({
+  id: '',
+  type: 'straight',
+  startItemId: '',
+  endItemId: '',
+  properties: new Map(),
+  selected: false
+}, 'Connection') {
+  constructor(json = {}) {
+    super({
+      ...json,
+      properties: fromJS(json.properties || {})
+    });
+  }
+}
+
 export class Layer extends Record({
   id: '',
   altitude: 0,
@@ -161,6 +179,7 @@ export class Layer extends Record({
   holes: new Map(),
   areas: new Map(),
   items: new Map(),
+  connections: new Map(),
   selected: new ElementsSet(),
 }, 'Layer') {
   constructor(json = {}) {
@@ -171,6 +190,7 @@ export class Layer extends Record({
       holes: safeLoadMapList(json.holes, Hole),
       areas: safeLoadMapList(json.areas, Area),
       items: safeLoadMapList(json.items, Item),
+      connections: safeLoadMapList(json.connections, Connection),
       selected: new ElementsSet(json.selected)
     });
   }

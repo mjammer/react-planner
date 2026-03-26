@@ -12,6 +12,7 @@ import {
   Line,
   Hole,
   Item,
+  Connection,
   HorizontalGuide,
   VerticalGuide
 } from '../class/export';
@@ -85,7 +86,8 @@ class Project{
     let {
       lines: selectedLines,
       holes: selectedHoles,
-      items: selectedItems
+      items: selectedItems,
+      connections: selectedConnections
     } = state.getIn(['scene', 'layers', selectedLayer, 'selected']);
 
     state = Layer.unselectAll( state, selectedLayer ).updatedState;
@@ -93,6 +95,9 @@ class Project{
     selectedLines.forEach(lineID => { state = Line.remove( state, selectedLayer, lineID ).updatedState; });
     selectedHoles.forEach(holeID => { state = Hole.remove( state, selectedLayer, holeID ).updatedState; });
     selectedItems.forEach(itemID => { state = Item.remove( state, selectedLayer, itemID ).updatedState; });
+    if (selectedConnections) {
+      selectedConnections.forEach(connectionID => { state = Connection.remove( state, selectedLayer, connectionID ).updatedState; });
+    }
 
     state = Layer.detectAndUpdateAreas( state, selectedLayer ).updatedState;
 

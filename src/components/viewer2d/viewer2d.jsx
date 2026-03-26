@@ -49,6 +49,9 @@ function mode2Cursor(mode) {
     case constants.MODE_ROTATING_ITEM:
       return { cursor: 'ew-resize' };
 
+    case constants.MODE_DRAWING_CONNECTION:
+      return { cursor: 'crosshair' };
+
     case constants.MODE_WAITING_DRAWING_LINE:
     case constants.MODE_DRAWING_LINE:
       return { cursor: 'crosshair' };
@@ -90,7 +93,7 @@ function extractElementData(node) {
 
 export default function Viewer2D(
   { state, width, height },
-  { viewer2DActions, linesActions, holesActions, verticesActions, itemsActions, areaActions, projectActions, catalog }) {
+  { viewer2DActions, linesActions, holesActions, verticesActions, itemsActions, areaActions, projectActions, connectionsActions, catalog }) {
 
 
   let { viewer2D, mode, scene } = state;
@@ -143,6 +146,10 @@ export default function Viewer2D(
 
       case constants.MODE_ROTATING_ITEM:
         itemsActions.updateRotatingItem(x, y);
+        break;
+
+      case constants.MODE_DRAWING_CONNECTION:
+        connectionsActions.updateDrawingConnection(x, y);
         break;
     }
 
@@ -222,6 +229,10 @@ export default function Viewer2D(
             itemsActions.selectItem(elementData.layer, elementData.id);
             break;
 
+          case 'connections':
+            connectionsActions.selectConnection(elementData.layer, elementData.id);
+            break;
+
           case 'none':
             projectActions.unselectAll();
             break;
@@ -264,6 +275,17 @@ export default function Viewer2D(
       case constants.MODE_ROTATING_ITEM:
         itemsActions.endRotatingItem(x, y);
         break;
+
+      case constants.MODE_DRAWING_CONNECTION: {
+        let elementData = extractElementData(event.target);
+        if (elementData && elementData.prototype === 'items') {
+          connectionsActions.endDrawingConnection(elementData.layer, elementData.id);
+        } else {
+          // Cancel connection drawing if clicking on empty space
+          connectionsActions.endDrawingConnection(layerID, null);
+        }
+        break;
+      }
     }
 
     event.stopPropagation();
@@ -373,6 +395,28 @@ export default function Viewer2D(
           <g style={Object.assign(mode2Cursor(mode), mode2PointerEvents(mode))}>
             <State state={state} catalog={catalog} />
           </g>
+          {mode === constants.MODE_DRAWING_CONNECTION && (() => {
+            let drawingSupport = state.drawingSupport;
+            let startItemId = drawingSupport.get('startItemId');
+            let drawingLayerID = drawingSupport.get('layerID') || layerID;
+            let currentX = drawingSupport.get('currentX');
+            let currentY = drawingSupport.get('currentY');
+            let startItem = startItemId && state.getIn(['scene', 'layers', drawingLayerID, 'items', startItemId]);
+            if (!startItem || currentX === undefined || currentY === undefined) return null;
+            return (
+              <line
+                x1={startItem.x}
+                y1={startItem.y}
+                x2={currentX}
+                y2={currentY}
+                stroke="#0066cc"
+                strokeWidth={2}
+                strokeDasharray="8,5"
+                strokeLinecap="round"
+                style={{ pointerEvents: 'none' }}
+              />
+            );
+          })()}
         </svg>
 
       </ReactSVGPanZoom>
@@ -395,5 +439,6 @@ Viewer2D.contextTypes = {
   itemsActions: PropTypes.object.isRequired,
   areaActions: PropTypes.object.isRequired,
   projectActions: PropTypes.object.isRequired,
+  connectionsActions: PropTypes.object.isRequired,
   catalog: PropTypes.object.isRequired,
 };

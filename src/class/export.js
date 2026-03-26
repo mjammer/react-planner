@@ -6,6 +6,7 @@ import Hole from './hole';
 import Vertex from './vertex';
 import Area from './area';
 import Item from './item';
+import Connection from './connection';
 import { HorizontalGuide, VerticalGuide } from './guide';
 
 export {
@@ -17,6 +18,7 @@ export {
   Vertex,
   Area,
   Item,
+  Connection,
   HorizontalGuide,
   VerticalGuide
 };
@@ -30,6 +32,7 @@ export default {
   Vertex,
   Area,
   Item,
+  Connection,
   HorizontalGuide,
   VerticalGuide
 };
