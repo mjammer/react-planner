@@ -21,7 +21,8 @@
 12. [前端工程集成步骤](#12-前端工程集成步骤)
 13. [安全与权限设计](#13-安全与权限设计)
 14. [性能优化建议](#14-性能优化建议)
-15. [附录：关键文件索引](#15-附录关键文件索引)
+15. [设备连线功能](#15-设备连线功能)
+16. [附录：关键文件索引](#16-附录关键文件索引)
 
 ---
 
@@ -68,7 +69,8 @@ AppState (Immutable Map)
     │   │       ├── lines     // 墙体
     │   │       ├── holes     // 门窗（墙上的洞口）
     │   │       ├── areas     // 自动识别的封闭区域（房间）
-    │   │       └── items     // 独立物体（设备放置于此）
+    │   │       ├── items     // 独立物体（设备放置于此）
+    │   │       └── connections // 设备连线
     │   ├── grids       // 网格配置
     │   └── guides      // 辅助线
     ├── catalog         // 元素目录（设备库）
@@ -1317,7 +1319,93 @@ store.dispatch(batchUpdateDeviceStatus([
 
 ---
 
-## 15. 附录：关键文件索引
+## 15. 设备连线功能
+
+### 15.1 功能概述
+
+设备连线功能允许用户在 2D 平面图中在智能设备（Items）之间创建可视化连线，用于表示设备间的通信关系、控制链路或信号走线。
+
+### 15.2 数据模型
+
+连线数据以 `Connection` Record 存储在每个 Layer 的 `connections` Map 中：
+
+```javascript
+Connection Record {
+  id: '',                  // 唯一标识符
+  type: 'straight',        // 连线类型：'straight'（直线）
+  prototype: 'connections', // 原型标识
+  name: '',                // 名称
+  startItemId: '',         // 起点设备 Item ID
+  endItemId: '',           // 终点设备 Item ID
+  properties: Map(),       // 自定义属性（颜色、线宽等）
+  selected: false,         // 是否被选中
+  visible: true            // 是否可见
+}
+```
+
+状态树结构：
+
+```
+scene.layers.[layerID].connections.[connectionID] → Connection Record
+scene.layers.[layerID].selected.connections → List of selected connection IDs
+```
+
+### 15.3 交互模式
+
+新增 `MODE_DRAWING_CONNECTION` 模式：
+
+1. **发起连线**：调用 `connectionsActions.selectToolDrawingConnection(startItemId)` 或 `connectionsActions.beginDrawingConnection(layerID, startItemId)` 进入连线绘制模式
+2. **绘制中**：鼠标移动时自动渲染一条从起点设备到鼠标位置的虚线（通过 `drawingSupport` 临时状态）
+3. **完成连线**：点击目标设备（Item）时调用 `connectionsActions.endDrawingConnection(layerID, endItemId)` 创建连线并回到 `MODE_IDLE`
+
+### 15.4 Action 接口
+
+| Action Creator | 说明 |
+|---------------|------|
+| `selectConnection(layerID, connectionID)` | 选中一条连线 |
+| `selectToolDrawingConnection(startItemId)` | 从当前选中层发起连线绘制 |
+| `beginDrawingConnection(layerID, startItemId)` | 指定层发起连线绘制 |
+| `updateDrawingConnection(x, y)` | 更新绘制中的鼠标位置 |
+| `endDrawingConnection(layerID, endItemId)` | 完成连线到目标设备 |
+| `removeConnection(layerID, connectionID)` | 删除指定连线 |
+
+### 15.5 关键文件
+
+| 文件路径 | 说明 |
+|---------|------|
+| `src/models.js` | `Connection` Record 定义、`Layer` 和 `ElementsSet` 扩展 |
+| `src/constants.js` | `MODE_DRAWING_CONNECTION` 和 `CONNECTION_ACTIONS` 常量 |
+| `src/class/connection.js` | Connection 静态操作类（create/remove/select/drawing lifecycle） |
+| `src/actions/connections-actions.js` | Connection Action Creator |
+| `src/reducers/connections-reducer.js` | Connection Reducer |
+| `src/components/viewer2d/connection.jsx` | 2D 连线 SVG 渲染组件 |
+| `src/components/viewer2d/layer.jsx` | Layer 渲染组件（已集成 Connection 渲染） |
+| `src/components/viewer2d/state.jsx` | 绘制中的临时虚线渲染 |
+| `src/components/viewer2d/viewer2d.jsx` | 连线模式的鼠标交互处理 |
+
+### 15.6 使用示例
+
+```javascript
+import { connectionsActions } from 'react-planner';
+
+// 从属性面板或自定义按钮发起连线
+dispatch(connectionsActions.selectToolDrawingConnection('item-001'));
+
+// 用户点击目标设备后自动完成连线（由 viewer2d.jsx 处理）
+// 也可以编程式创建连线
+dispatch(connectionsActions.endDrawingConnection('layer-1', 'item-002'));
+
+// 删除连线
+dispatch(connectionsActions.removeConnection('layer-1', 'connection-001'));
+```
+
+### 15.7 自动清理
+
+当删除一个 Item 时，该 Item 关联的所有 Connection 会被自动删除（通过 `Connection.removeConnectionsByItemId`）。
+
+---
+
+## 16. 附录：关键文件索引
 
 | 文件路径 | 说明 |
 |---------|------|
@@ -1329,6 +1417,10 @@ store.dispatch(batchUpdateDeviceStatus([
 | `src/class/area.js` | Area 静态操作类（含 `detectAndUpdateAreas`） |
 | `src/reducers/reducer.js` | 主 reducer，action 路由逻辑 |
 | `src/actions/items-actions.js` | Items 相关 Action Creator |
+| `src/class/connection.js` | Connection 静态操作类（create/remove/select/drawing） |
+| `src/actions/connections-actions.js` | Connections 相关 Action Creator |
+| `src/reducers/connections-reducer.js` | Connections Reducer |
+| `src/components/viewer2d/connection.jsx` | 2D 连线渲染组件 |
 | `src/plugins/autosave.js` | 自动保存插件（SyncPlugin 参考原型） |
 | `src/utils/geometry-utils.js` | 几何计算工具（坐标变换等） |
 | `src/components/viewer2d/item.jsx` | 2D Item 渲染组件（调用 render2D） |
