@@ -161,4 +161,4 @@ var Graph = function () {
   return Graph;
 }();
 
-module.exports = Graph;
+export default Graph;

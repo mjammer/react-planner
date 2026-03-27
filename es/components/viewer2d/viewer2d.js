@@ -5,7 +5,8 @@ import { ReactSVGPanZoom, TOOL_NONE, TOOL_PAN, TOOL_ZOOM_IN, TOOL_ZOOM_OUT, TOOL
 import * as constants from '../../constants';
 import State from './state';
 import * as SharedStyle from '../../shared-style';
-import { RulerX, RulerY } from './export';
+import RulerX from './rulerX';
+import RulerY from './rulerY';
 
 function mode2Tool(mode) {
   switch (mode) {

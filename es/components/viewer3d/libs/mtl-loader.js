@@ -4,7 +4,8 @@
  * @author angelxuanchang
  */
 
-var THREE = window.THREE || require('three');
+import * as THREE_MODULE from 'three';
+var THREE = window.THREE || THREE_MODULE;
 var MTLLoader = void 0;
 
 MTLLoader = function MTLLoader(manager) {
@@ -497,4 +498,4 @@ MTLLoader.MaterialCreator.prototype = {
 
 };
 
-module.exports = MTLLoader;
+export default MTLLoader;

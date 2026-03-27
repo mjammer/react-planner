@@ -2,7 +2,8 @@
  * @author mrdoob / http://mrdoob.com/
  */
 
-var THREE = window.THREE || require('three');
+import * as THREE_MODULE from 'three';
+var THREE = window.THREE || THREE_MODULE;
 var OBJLoader = void 0;
 
 OBJLoader = function OBJLoader(manager) {
@@ -623,4 +624,4 @@ OBJLoader.prototype = {
 
 };
 
-module.exports = OBJLoader;
+export default OBJLoader;

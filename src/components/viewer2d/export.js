@@ -32,20 +32,4 @@ export {
   RulerY
 };
 
-export default {
-  Viewer2D,
-  Vertex,
-  State,
-  Snap,
-  Scene,
-  Ruler,
-  Line,
-  Layer,
-  Item,
-  Area,
-  Grids,
-  Group,
-  Connection,
-  RulerX,
-  RulerY
-};
+export default {};

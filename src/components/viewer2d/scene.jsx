@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Layer, Grids } from './export';
+import Layer from './layer';
+import Grids from './grids/grids';
 
 export default class Scene extends Component {
 

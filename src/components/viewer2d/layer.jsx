@@ -1,13 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Line,
-  Area,
-  Vertex,
-  Item,
-  Group,
-  Connection
-} from './export';
+import Line from './line';
+import Area from './area';
+import Vertex from './vertex';
+import Item from './item';
+import Group from './group';
+import Connection from './connection';
 
 export default function Layer({ layer, scene, catalog }) {
 

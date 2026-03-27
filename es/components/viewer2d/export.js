@@ -16,20 +16,4 @@ import RulerY from './rulerY';
 
 export { Viewer2D, Vertex, State, Snap, Scene, Ruler, Line, Layer, Item, Area, Grids, Group, Connection, RulerX, RulerY };
 
-export default {
-  Viewer2D: Viewer2D,
-  Vertex: Vertex,
-  State: State,
-  Snap: Snap,
-  Scene: Scene,
-  Ruler: Ruler,
-  Line: Line,
-  Layer: Layer,
-  Item: Item,
-  Area: Area,
-  Grids: Grids,
-  Group: Group,
-  Connection: Connection,
-  RulerX: RulerX,
-  RulerY: RulerY
-};
+export default {};
