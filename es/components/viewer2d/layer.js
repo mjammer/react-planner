@@ -1,6 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Line, Area, Vertex, Item, Group } from './export';
+import Line from './line';
+import Area from './area';
+import Vertex from './vertex';
+import Item from './item';
+import Group from './group';
+import Connection from './connection';
 
 export default function Layer(_ref) {
   var layer = _ref.layer,
@@ -14,6 +19,7 @@ export default function Layer(_ref) {
       holes = layer.holes,
       layerID = layer.id,
       items = layer.items,
+      connections = layer.connections,
       opacity = layer.opacity;
 
 
@@ -25,6 +31,9 @@ export default function Layer(_ref) {
     }),
     lines.valueSeq().map(function (line) {
       return React.createElement(Line, { key: line.id, layer: layer, line: line, scene: scene, catalog: catalog });
+    }),
+    connections.valueSeq().map(function (connection) {
+      return React.createElement(Connection, { key: connection.id, layer: layer, connection: connection });
     }),
     items.valueSeq().map(function (item) {
       return React.createElement(Item, { key: item.id, layer: layer, item: item, scene: scene, catalog: catalog });

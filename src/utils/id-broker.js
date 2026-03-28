@@ -1,4 +1,4 @@
-let shortid = require('shortid');
+import shortid from 'shortid';
 
 export class IDBroker {
   static acquireID() {

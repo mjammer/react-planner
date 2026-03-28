@@ -6,7 +6,7 @@ import { Map, List } from 'immutable';
 import { MODE_VIEWING_CATALOG, MODE_CONFIGURING_PROJECT, MODE_IDLE } from '../constants';
 import { State, Catalog } from '../models';
 import { history } from '../utils/export';
-import { Layer, Group, Line, Hole, Item, HorizontalGuide, VerticalGuide } from '../class/export';
+import { Layer, Group, Line, Hole, Item, Connection, HorizontalGuide, VerticalGuide } from '../class/export';
 
 var Project = function () {
   function Project() {
@@ -104,7 +104,8 @@ var Project = function () {
       var _state$getIn = state.getIn(['scene', 'layers', selectedLayer, 'selected']),
           selectedLines = _state$getIn.lines,
           selectedHoles = _state$getIn.holes,
-          selectedItems = _state$getIn.items;
+          selectedItems = _state$getIn.items,
+          selectedConnections = _state$getIn.connections;
 
       state = Layer.unselectAll(state, selectedLayer).updatedState;
 
@@ -113,6 +114,9 @@ var Project = function () {
       });
       selectedHoles.forEach(function (holeID) {
         state = Hole.remove(state, selectedLayer, holeID).updatedState;
+      });
+      selectedConnections.forEach(function (connectionID) {
+        state = Connection.remove(state, selectedLayer, connectionID).updatedState;
       });
       selectedItems.forEach(function (itemID) {
         state = Item.remove(state, selectedLayer, itemID).updatedState;

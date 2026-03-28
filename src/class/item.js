@@ -1,4 +1,4 @@
-import { Layer, Group } from './export';
+import { Layer, Group, Connection } from './export';
 import {
   IDBroker,
   NameGenerator
@@ -42,6 +42,7 @@ class Item{
 
   static remove( state, layerID, itemID ) {
     state = this.unselect( state, layerID, itemID ).updatedState;
+    state = Connection.removeConnectionsByItemId( state, layerID, itemID ).updatedState;
     state = Layer.removeElement( state, layerID, 'items', itemID ).updatedState;
 
     state.getIn(['scene', 'groups']).forEach( group => state = Group.removeElement(state, group.id, layerID, 'items', itemID).updatedState );

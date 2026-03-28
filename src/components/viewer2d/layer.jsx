@@ -1,17 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Line,
-  Area,
-  Vertex,
-  Item,
-  Group
-} from './export';
+import Line from './line';
+import Area from './area';
+import Vertex from './vertex';
+import Item from './item';
+import Group from './group';
+import Connection from './connection';
 
 export default function Layer({ layer, scene, catalog }) {
 
   let { unit, groups } = scene;
-  let { lines, areas, vertices, holes, id: layerID, items, opacity } = layer;
+  let { lines, areas, vertices, holes, id: layerID, items, connections, opacity } = layer;
 
   return (
     <g opacity={opacity}>
@@ -22,6 +21,10 @@ export default function Layer({ layer, scene, catalog }) {
       {
         lines.valueSeq().map(line =>
           <Line key={line.id} layer={layer} line={line} scene={scene} catalog={catalog} />)
+      }
+      {
+        connections.valueSeq().map(connection =>
+          <Connection key={connection.id} layer={layer} connection={connection} />)
       }
       {
         items.valueSeq().map(item =>

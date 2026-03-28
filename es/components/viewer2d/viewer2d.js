@@ -5,7 +5,8 @@ import { ReactSVGPanZoom, TOOL_NONE, TOOL_PAN, TOOL_ZOOM_IN, TOOL_ZOOM_OUT, TOOL
 import * as constants from '../../constants';
 import State from './state';
 import * as SharedStyle from '../../shared-style';
-import { RulerX, RulerY } from './export';
+import RulerX from './rulerX';
+import RulerY from './rulerY';
 
 function mode2Tool(mode) {
   switch (mode) {
@@ -31,6 +32,7 @@ function mode2PointerEvents(mode) {
     case constants.MODE_DRAGGING_ITEM:
     case constants.MODE_DRAGGING_LINE:
     case constants.MODE_DRAGGING_VERTEX:
+    case constants.MODE_DRAWING_CONNECTION:
       return { pointerEvents: 'none' };
 
     default:
@@ -51,6 +53,7 @@ function mode2Cursor(mode) {
 
     case constants.MODE_WAITING_DRAWING_LINE:
     case constants.MODE_DRAWING_LINE:
+    case constants.MODE_DRAWING_CONNECTION:
       return { cursor: 'crosshair' };
     default:
       return { cursor: 'default' };
@@ -66,6 +69,7 @@ function mode2DetectAutopan(mode) {
     case constants.MODE_DRAGGING_ITEM:
     case constants.MODE_DRAWING_HOLE:
     case constants.MODE_DRAWING_ITEM:
+    case constants.MODE_DRAWING_CONNECTION:
       return true;
 
     default:
@@ -99,6 +103,7 @@ export default function Viewer2D(_ref, _ref2) {
       itemsActions = _ref2.itemsActions,
       areaActions = _ref2.areaActions,
       projectActions = _ref2.projectActions,
+      connectionsActions = _ref2.connectionsActions,
       catalog = _ref2.catalog;
   var viewer2D = state.viewer2D,
       mode = state.mode,
@@ -158,6 +163,10 @@ export default function Viewer2D(_ref, _ref2) {
 
       case constants.MODE_ROTATING_ITEM:
         itemsActions.updateRotatingItem(x, y);
+        break;
+
+      case constants.MODE_DRAWING_CONNECTION:
+        connectionsActions.updateDrawingConnection(x, y);
         break;
     }
 
@@ -239,6 +248,10 @@ export default function Viewer2D(_ref, _ref2) {
             itemsActions.selectItem(elementData.layer, elementData.id);
             break;
 
+          case 'connections':
+            connectionsActions.selectConnection(elementData.layer, elementData.id);
+            break;
+
           case 'none':
             projectActions.unselectAll();
             break;
@@ -280,6 +293,13 @@ export default function Viewer2D(_ref, _ref2) {
 
       case constants.MODE_ROTATING_ITEM:
         itemsActions.endRotatingItem(x, y);
+        break;
+
+      case constants.MODE_DRAWING_CONNECTION:
+        var connectionElementData = extractElementData(event.target);
+        if (connectionElementData && connectionElementData.prototype === 'items') {
+          connectionsActions.endDrawingConnection(layerID, connectionElementData.id);
+        }
         break;
     }
 
@@ -427,5 +447,6 @@ Viewer2D.contextTypes = {
   itemsActions: PropTypes.object.isRequired,
   areaActions: PropTypes.object.isRequired,
   projectActions: PropTypes.object.isRequired,
+  connectionsActions: PropTypes.object.isRequired,
   catalog: PropTypes.object.isRequired
 };

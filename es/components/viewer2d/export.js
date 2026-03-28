@@ -10,24 +10,10 @@ import Item from './item';
 import Area from './area';
 import Grids from './grids/grids';
 import Group from './group';
+import Connection from './connection';
 import RulerX from './rulerX';
 import RulerY from './rulerY';
 
-export { Viewer2D, Vertex, State, Snap, Scene, Ruler, Line, Layer, Item, Area, Grids, Group, RulerX, RulerY };
+export { Viewer2D, Vertex, State, Snap, Scene, Ruler, Line, Layer, Item, Area, Grids, Group, Connection, RulerX, RulerY };
 
-export default {
-  Viewer2D: Viewer2D,
-  Vertex: Vertex,
-  State: State,
-  Snap: Snap,
-  Scene: Scene,
-  Ruler: Ruler,
-  Line: Line,
-  Layer: Layer,
-  Item: Item,
-  Area: Area,
-  Grids: Grids,
-  Group: Group,
-  RulerX: RulerX,
-  RulerY: RulerY
-};
+export default {};

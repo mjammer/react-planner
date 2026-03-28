@@ -1,5 +1,5 @@
 import { List } from 'immutable';
-import { Project, Area, Line, Hole, Item, Vertex } from './export';
+import { Project, Area, Line, Hole, Item, Vertex, Connection } from './export';
 import {
   GraphInnerCycles,
   GeometryUtils,
@@ -45,12 +45,13 @@ class Layer{
   }
 
   static unselectAll( state, layerID ) {
-    let { lines, holes, items, areas } = state.getIn(['scene', 'layers', layerID]);
+    let { lines, holes, items, areas, connections } = state.getIn(['scene', 'layers', layerID]);
 
     if( lines ) lines.forEach( line => { state = Line.unselect( state, layerID, line.id ).updatedState; });
     if( holes ) holes.forEach( hole => { state = Hole.unselect( state, layerID, hole.id ).updatedState; });
     if( items ) items.forEach( item => { state = Item.unselect( state, layerID, item.id ).updatedState; });
     if( areas ) areas.forEach( area => { state = Area.unselect( state, layerID, area.id ).updatedState; });
+    if( connections ) connections.forEach( connection => { state = Connection.unselect( state, layerID, connection.id ).updatedState; });
 
     return { updatedState: state };
   }
@@ -260,6 +261,7 @@ class Layer{
     selected.holes.forEach(holeID => state = Hole.setProperties(state, layerID, holeID, properties).updatedState);
     selected.areas.forEach(areaID => state = Area.setProperties(state, layerID, areaID, properties).updatedState);
     selected.items.forEach(itemID => state = Item.setProperties(state, layerID, itemID, properties).updatedState);
+    selected.connections.forEach(connectionID => state = Connection.setProperties(state, layerID, connectionID, properties).updatedState);
 
     return { updatedState: state };
   }
@@ -271,6 +273,7 @@ class Layer{
     selected.holes.forEach(holeID => state = Hole.updateProperties(state, layerID, holeID, properties).updatedState);
     selected.areas.forEach(areaID => state = Area.updateProperties(state, layerID, areaID, properties).updatedState);
     selected.items.forEach(itemID => state = Item.updateProperties(state, layerID, itemID, properties).updatedState);
+    selected.connections.forEach(connectionID => state = Connection.updateProperties(state, layerID, connectionID, properties).updatedState);
 
     return { updatedState: state };
   }

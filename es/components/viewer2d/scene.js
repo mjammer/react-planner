@@ -10,7 +10,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Layer, Grids } from './export';
+import Layer from './layer';
+import Grids from './grids/grids';
 
 var Scene = function (_Component) {
   _inherits(Scene, _Component);

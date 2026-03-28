@@ -228,8 +228,7 @@ function find_inner_cycles(V, EV) {
   };
 }
 
-// export default find_inner_cycles;
-module.exports = find_inner_cycles;
+export default find_inner_cycles;
 
 /**
 * DATA

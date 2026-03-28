@@ -27,4 +27,4 @@ function getVerticesFromBiconnectedComponent(component) {
     return vertices;
 }
 
-module.exports = getEdgesOfSubgraphs;
+export default getEdgesOfSubgraphs;

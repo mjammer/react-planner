@@ -70,7 +70,8 @@ export var ElementsSet = function (_Record2) {
       lines: new List(json.lines || []),
       holes: new List(json.holes || []),
       areas: new List(json.areas || []),
-      items: new List(json.items || [])
+      items: new List(json.items || []),
+      connections: new List(json.connections || [])
     }));
   }
 
@@ -80,7 +81,8 @@ export var ElementsSet = function (_Record2) {
   lines: new List(),
   holes: new List(),
   areas: new List(),
-  items: new List()
+  items: new List(),
+  connections: new List()
 }, 'ElementsSet'));
 
 var sharedAttributes = {
@@ -201,8 +203,34 @@ export var Item = function (_Record7) {
   rotation: 0
 }), 'Item'));
 
-export var Layer = function (_Record8) {
-  _inherits(Layer, _Record8);
+export var Connection = function (_Record8) {
+  _inherits(Connection, _Record8);
+
+  function Connection() {
+    var json = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    _classCallCheck(this, Connection);
+
+    return _possibleConstructorReturn(this, (Connection.__proto__ || Object.getPrototypeOf(Connection)).call(this, _extends({}, json, {
+      properties: fromJS(json.properties || {})
+    })));
+  }
+
+  return Connection;
+}(Record({
+  id: '',
+  type: 'straight',
+  prototype: 'connections',
+  name: '',
+  startItemId: '',
+  endItemId: '',
+  properties: new Map(),
+  selected: false,
+  visible: true
+}, 'Connection'));
+
+export var Layer = function (_Record9) {
+  _inherits(Layer, _Record9);
 
   function Layer() {
     var json = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -215,6 +243,7 @@ export var Layer = function (_Record8) {
       holes: safeLoadMapList(json.holes, Hole),
       areas: safeLoadMapList(json.areas, Area),
       items: safeLoadMapList(json.items, Item),
+      connections: safeLoadMapList(json.connections, Connection),
       selected: new ElementsSet(json.selected)
     })));
   }
@@ -232,11 +261,12 @@ export var Layer = function (_Record8) {
   holes: new Map(),
   areas: new Map(),
   items: new Map(),
+  connections: new Map(),
   selected: new ElementsSet()
 }, 'Layer'));
 
-export var Group = function (_Record9) {
-  _inherits(Group, _Record9);
+export var Group = function (_Record10) {
+  _inherits(Group, _Record10);
 
   function Group() {
     var json = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -262,8 +292,8 @@ export var DefaultLayers = new Map({
   'layer-1': new Layer({ id: 'layer-1', name: 'default' })
 });
 
-export var Scene = function (_Record10) {
-  _inherits(Scene, _Record10);
+export var Scene = function (_Record11) {
+  _inherits(Scene, _Record11);
 
   function Scene() {
     var json = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -294,8 +324,8 @@ export var Scene = function (_Record10) {
   guides: new Map()
 }, 'Scene'));
 
-export var CatalogElement = function (_Record11) {
-  _inherits(CatalogElement, _Record11);
+export var CatalogElement = function (_Record12) {
+  _inherits(CatalogElement, _Record12);
 
   function CatalogElement() {
     var json = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -316,8 +346,8 @@ export var CatalogElement = function (_Record11) {
   properties: new Map()
 }, 'CatalogElement'));
 
-export var Catalog = function (_Record12) {
-  _inherits(Catalog, _Record12);
+export var Catalog = function (_Record13) {
+  _inherits(Catalog, _Record13);
 
   function Catalog() {
     var json = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -373,8 +403,8 @@ export var Catalog = function (_Record12) {
   elements: new Map()
 }, 'Catalog'));
 
-export var HistoryStructure = function (_Record13) {
-  _inherits(HistoryStructure, _Record13);
+export var HistoryStructure = function (_Record14) {
+  _inherits(HistoryStructure, _Record14);
 
   function HistoryStructure() {
     var json = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -395,8 +425,8 @@ export var HistoryStructure = function (_Record13) {
   last: null
 }, 'HistoryStructure'));
 
-export var State = function (_Record14) {
-  _inherits(State, _Record14);
+export var State = function (_Record15) {
+  _inherits(State, _Record15);
 
   function State() {
     var json = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};

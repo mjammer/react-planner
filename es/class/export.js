@@ -6,9 +6,10 @@ import Hole from './hole';
 import Vertex from './vertex';
 import Area from './area';
 import Item from './item';
+import Connection from './connection';
 import { HorizontalGuide, VerticalGuide } from './guide';
 
-export { Project, Group, Layer, Line, Hole, Vertex, Area, Item, HorizontalGuide, VerticalGuide };
+export { Project, Group, Layer, Line, Hole, Vertex, Area, Item, Connection, HorizontalGuide, VerticalGuide };
 
 export default {
   Project: Project,
@@ -19,6 +20,7 @@ export default {
   Vertex: Vertex,
   Area: Area,
   Item: Item,
+  Connection: Connection,
   HorizontalGuide: HorizontalGuide,
   VerticalGuide: VerticalGuide
 };
